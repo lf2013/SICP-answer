@@ -7,7 +7,7 @@
 (define (try)
 	((compose square inc) 6))
 
-(define (repeated f n)
+(define (repeated f n);使用里1.42的函数
 	(cond ((= n 1) f)
 ;		(else ((f) (repeated f (- n 1))))))
 		  (else (compose f (repeated f (- n 1))))))
