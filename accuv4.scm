@@ -1,4 +1,4 @@
-(define (accumulate means gcd1 f a next b)
+(define (accumulate means gcd1 f a next b);1.33-b
 	(if (> a b)
 		1
 	(means (cond ((= (gcd1 a b) 1)(f a))

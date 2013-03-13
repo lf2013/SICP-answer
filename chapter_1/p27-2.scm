@@ -1,0 +1,5 @@
+(define (pat i j)
+	(cond ((= i 1) 1)
+		  ((= j 1) 1)
+		  ((= i j) 1)
+		  (else (+ (pat (- i 1) j) (pat (- i 1)(- j 1))))))
