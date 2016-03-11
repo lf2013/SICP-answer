@@ -1,13 +1,17 @@
-(define (smallest-divisor n)
-	(find-divisor 2 n))
+(define (expmod base e m)
+    (cond ((= e 0) 1)
+          ((even? e) (remainder (square (expmod base (/ e 2) m)) m))
+          (else (remainder (* base (expmod base (- e 1) m)) m))))
 
-(define (find-divisor i n)
-	(cond ((> (* i i) n) n)
-		  ((= (remainder n i) 0) i)
-		  (else (find-divisor (+ 1 i) n))))
+(define (fast-test n)
+    (define (try-it a)
+    (= (expmod a (- n 1) n) 1))
+    (try-it (+ 1 (random (- n 1)))))
 
-(define (prime? n)
-	(= n (smallest-divisor n)))
+(define (fast-prime? n times)
+    (cond ((= times 0) true)
+         ((fast-test n) (fast-prime? n (- times 1)))
+         (else false)))
 
 (define (timed-prime-test n)
 	(newline)
@@ -15,7 +19,7 @@
 	(start-prime-test n (runtime)))
 
 (define (start-prime-test n start-time)
-	(if (prime? n)
+	(if (fast-prime? n 10)
 		(report-prime (- (runtime) start-time))))
 
 (define (report-prime elapsed-time)
@@ -32,6 +36,14 @@
         (timed-prime-test l)
         (search-for-prime (+ l 2) r)))))
 
+(define (test-n n)
+    (define (test-iter a b)
+        (if (< a b)
+            (if (= (expmod a (- b 1) b) 1) (test-iter (+ 1 a) b) false)
+        true))
+    (test-iter 1 n)
+)
+
 (define (try)
 	(display (search-for-prime 1000 1020))
 	(display (search-for-prime 10000 10020))
@@ -41,4 +53,12 @@
 	(display (search-for-prime 1000000000 1000000020))
 	(display (search-for-prime 10000000000 10000000020))
 	(display (search-for-prime 100000000000 100000000020))
+)
+
+(define (try2)
+    (display (test-n 561))
+    (display (test-n 1105))
+    (display (test-n 2465))
+    (display (test-n 2821))
+    (display (test-n 6601))
 )

@@ -4,7 +4,11 @@
 (define (find-divisor i n)
 	(cond ((> (* i i) n) n)
 		  ((= (remainder n i) 0) i)
-		  (else (find-divisor (+ 1 i) n))))
+		  (else (find-divisor (next i) n))))
+
+(define (next i)
+    (if (= i 2) 3
+        (+ i 2)))
 
 (define (prime? n)
 	(= n (smallest-divisor n)))

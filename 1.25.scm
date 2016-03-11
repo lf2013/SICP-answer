@@ -1,13 +1,22 @@
-(define (smallest-divisor n)
-	(find-divisor 2 n))
+(define (fast-expt b e)
+    (cond ((= e 0) 1)
+          ((even? e) (square (fast-expt b (/ e 2))))
+          (else (* b (fast-expt b (- e 1) )))
+    )
+)
 
-(define (find-divisor i n)
-	(cond ((> (* i i) n) n)
-		  ((= (remainder n i) 0) i)
-		  (else (find-divisor (+ 1 i) n))))
+(define (expmod base e m)
+    (remainder (fast-expt base e) m))
 
-(define (prime? n)
-	(= n (smallest-divisor n)))
+(define (fast-test n)
+    (define (try-it a)
+    (= (expmod a n n) a))
+    (try-it (+ 1 (random (- n 1)))))
+
+(define (fast-prime? n times)
+    (cond ((= times 0) true)
+         ((fast-test n) (fast-prime? n (- times 1)))
+         (else false)))
 
 (define (timed-prime-test n)
 	(newline)
@@ -15,7 +24,7 @@
 	(start-prime-test n (runtime)))
 
 (define (start-prime-test n start-time)
-	(if (prime? n)
+	(if (fast-prime? n 10)
 		(report-prime (- (runtime) start-time))))
 
 (define (report-prime elapsed-time)
