@@ -40,5 +40,3 @@
 ;	 (product squre 3.0 incby2 (- (* 2 b) 1))
 	 (* 2 (product squre1 2.0 prime? incby2  b))
 )
-	
-	
