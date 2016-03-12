@@ -1,4 +1,4 @@
-; 1.37
+; 1.38
 (define (cont-frac n d k)
     (define (iter n d i result)
         (if (= i 0)
