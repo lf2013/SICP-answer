@@ -23,6 +23,7 @@
         (/ (+ (/ x guess) guess) 2))
     ((iterative-improve sqrt-good-enough? sqrt-improve) 1.0))
 
+; 1.33 old solution
 ;(define (fixed-point f first-guess)
 ;    (define (close-enough? a b)
 ;        (< (abs (- a b)) 0.0001))
