@@ -1,22 +1,22 @@
-(define (accumulate means gcd1 f a next b);1.33-b
-	(if (> a b)
-		1
-	(means (cond ((= (gcd1 a b) 1)(f a))
-			(else 1)) 
-		(accumulate means gcd1 f (next a) next b)
-	))
-)
-(define (product f a prime? next b)
+;(define (accumulate means f a next b)
+;	(if (> a b)
+;		1
+;	(means (f a) 
+;		(product f (next a) next b)
+;	))
+;)
+
+(define (product f a prime? next b) ;1.33-b 是所有素数之积的形式
 	(accumulate * f  prime? a next b)
 )
-;(define (accumulate means filtera f a next b)
-;	(define (deal c a)
-;	(if (> a b)
-;		c
-;	(deal (means c (* (f a) (filtera a))) (next a)) 
-;	))
-;	(deal 0 a)
-;)
+(define (accumulate means filtera f a next b)
+	(define (deal c a)
+	(if (> a b)
+		c
+	(deal (means c (* (f a) (filtera a))) (next a)) 
+	))
+	(deal 0 a)
+)
 (define (prime? x)
 	(define (deal a x)
 		(cond ((> (* a a) x) 1)
