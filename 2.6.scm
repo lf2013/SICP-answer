@@ -17,6 +17,6 @@
 ;(lambda (f) (lambda (x) x))
 
 ;(add one one)
-(lambda (f) (lambda (x) (one f ((one f) x))))
-(lambda (f) (lambda (x) (one f (f x))))
-(lambda (f) (lambda (x) (f (f x))))
+;(lambda (f) (lambda (x) (one f ((one f) x))))
+;(lambda (f) (lambda (x) (one f (f x))))
+;(lambda (f) (lambda (x) (f (f x))))
