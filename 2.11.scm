@@ -1,4 +1,4 @@
-; 2.8
+; 2.11
 (define (make-interval a b) (cons a b))
 (define (upper-bound x) (max (cdr x) (car x)))
 (define (lower-bound x) (min (car x) (cdr x)))
