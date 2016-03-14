@@ -1,0 +1,58 @@
+; 2.8
+(define (make-interval a b) (cons a b))
+(define (upper-bound x) (max (cdr x) (car x)))
+(define (lower-bound x) (min (car x) (cdr x)))
+(define (print-interval x)
+    (display "(")
+    (display (lower-bound x))
+    (display ", ")
+    (display (upper-bound x))
+    (display ")"))
+
+(define (add-interval x y)
+    (make-interval (+ (lower-bound x) (lower-bound y))
+                   (+ (upper-bound x) (upper-bound y))))
+(define (mul-interval x y)
+    (let ((p1 (* (lower-bound x) (lower-bound y)))
+          (p2 (* (lower-bound x) (upper-bound y)))
+          (p3 (* (upper-bound x) (lower-bound y)))
+          (p4 (* (upper-bound x) (upper-bound y))))
+    (make-interval (min p1 p2 p3 p4)
+                   (max p1  p2 p3 p4))))
+
+(define (sub-interval x y)
+    (make-interval (- (lower-bound x) (upper-bound y))
+                   (- (upper-bound x) (lower-bound y))))
+
+(define (div-internal x y)
+    (if (> 0 (* (upper-bound y) (lower-bound y)))
+        (error "bad bound")
+    (mul-interval x (make-interval (/ 1.0 (upper-bound y)) (/ 1.0 (lower-bound y))))))
+
+(define (mul-interval-v2 x y)
+    (let ((lx (lower-bound x)) (ux (upper-bound x))
+          (ly (lower-bound y)) (uy (upper-bound y)))
+    (cond ((> lx 0)
+            (cond ((> ly 0) (make-interval (* lx ly) (* ux uy)))
+                  ((< uy 0) (make-interval (* ux ly) (* lx uy)))
+                  (else (make-interval (* ux ly) (* ux uy)))))
+          ((< 0 lx)
+            (cond ((> ly 0) (make-interval (* lx uy) (* ux ly)))
+                  ((< uy 0) (make-interval (* lx ly) (* ux uy)))
+                  (else (make-interval (* lx uy) (* ux ly)))))
+
+          (else
+            (cond ((> ly 0) (make-interval (* lx uy) (* ux uy)))
+                  ((< uy 0) (make-interval (* ux ly) (* lx ly)))
+                  (else (make-interval (min (* ux ly) (* lx uy)) (max (* lx ly) (* ux uy)))))))))
+
+(define (try)
+    (print-interval (mul-interval (make-interval 1 3) (make-interval 1 3)))
+    (print-interval (mul-interval (make-interval 1 3) (make-interval 1 3)))
+
+    (print-interval (mul-interval (make-interval -1 3) (make-interval 1 3)))
+    (print-interval (mul-interval (make-interval -1 3) (make-interval 1 3)))
+
+    (print-interval (mul-interval (make-interval -1 3) (make-interval -1 3)))
+    (print-interval (mul-interval (make-interval -1 3) (make-interval -1 3)))
+)
