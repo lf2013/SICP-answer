@@ -1,0 +1,22 @@
+; 2.20
+(define (same-parity x . w)
+    (define (iter y r)
+        (if (null? y)
+            r
+        (if (= (remainder (- x (car y)) 2) 0)
+            (iter (cdr y) (cons r (car y)))
+            (iter (cdr y) r))))
+(iter w x))
+
+;(define (same-parity x . w)
+;    (if (null? w)
+;        (list)
+;        (if (= (remainder (- x (car y)) 2) 0)
+;            (cons x (cons (car w) (same-parity x (cdr w))))
+;            (cons x (same-parity x (cdr w)))))
+;)
+(define (try)
+    (display (same-parity 1 2 3 4 5 6))
+    (newline)
+    (display (same-parity 2 3 4 5 6))
+)
