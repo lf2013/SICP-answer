@@ -10,7 +10,8 @@
     (define (revsese-iter l s)
         (cond ((null? l) s)
               ((not (pair? l)) l)
-              (else (revsese-iter (cdr l) (cons (revsese-deep (car l)) s)))))
+              (else (revsese-iter (cdr l) (cons (revsese-iter (car l) (list)) s)))))
+              ;(else (revsese-iter (cdr l) (cons (revsese-deep (car l)) s)))))
     (revsese-iter l (list)))
 
 (define x (list (list 1 2) (list 3 4 5) (list (list 6 7) (list 8 9))))
