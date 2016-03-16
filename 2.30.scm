@@ -1,0 +1,25 @@
+; 2.30
+(define (square-tree tree)
+    (cond ((null? tree) tree)
+          ((not (pair? tree)) (* tree tree))
+          ;((not (pair? tree)) tree)
+          (else (cons (square-tree (car tree))
+                      (square-tree (cdr tree))))))
+
+(define (map proc l)
+    (if (null? l)
+        (list)
+    (cons (proc (car l))
+        (map proc (cdr l)))))
+
+(define (square-tree-v2 tree)
+    (map (lambda (x)
+            (if (pair? x)
+                (square-tree-v2 x)
+            (* x x))) tree))
+
+(define (try)
+    (list 1 (list 2 (list 3 4) 5))
+    (square-tree (list 1 (list 2 (list 3 4) 5)))
+    (square-tree-v2 (list 1 (list 2 (list 3 4) 5)))
+)
