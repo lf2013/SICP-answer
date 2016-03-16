@@ -22,8 +22,7 @@
 (define (revsese-deep-v2 l)
     (cond ((null? l) l)
           ((not (pair? l)) l)
-          ;(else (revsese (cons (revsese-deep-v2 (car l)) (revsese-deep-v2 (cdr l)))))))
-          (else (revsese (cons (revsese-deep-v2 (car l)) (revsese-deep-v2 (cdr l)))))))
+          (else (revsese (cons (revsese-deep-v2 (car l)) (revsese (revsese-deep-v2 (cdr l))))))))
 
 (define (map proc l)
     (if (null? l)
@@ -31,7 +30,7 @@
     (cons (proc (car l))
         (map proc (cdr l)))))
 
-(define (revsese-deep-v3 x)
+(define (revsese-deep-v3 l)
     (if (pair? l)
         (revsese (map revsese-deep-v3 l))
         l))
