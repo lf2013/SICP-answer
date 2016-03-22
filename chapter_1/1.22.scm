@@ -1,3 +1,4 @@
+; 1.22
 (define (smallest-divisor n)
 	(find-divisor 2 n))
 
