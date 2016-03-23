@@ -1,0 +1,25 @@
+; the thing worth doing typically take time and effort
+; 2.53
+
+(define (memq item x)
+    (cond ((null? x) false)
+          ((equal? item (car x)) x)
+          (else (memq item (cdr x)))))
+
+(define (try)
+    (display (list 'a 'b 'c))
+    (newline)
+    (display (list (list 'george)))
+    (newline)
+    (display (cdr '((x1 x2) (y1 y2))))
+    (newline)
+    (display (cadr '((x1 x2) (y1 y2))))
+    (newline)
+    (display (pair? (car '(a short list))))
+    (newline)
+    (display (list 'a 'b 'c))
+    (newline)
+    (display (memq 'red '((red shoes) (bule socks))))
+    (newline)
+    (display (memq 'red '(red shoes bule socks)))
+)
