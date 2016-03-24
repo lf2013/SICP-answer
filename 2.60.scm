@@ -1,5 +1,5 @@
 ; the thing worth doing typically take time and effort.
-; 2.50
+; 2.60
 (define (element-of-set? x set)
     (cond ((null? set) false)
           ((equal? x (car set)) true)
