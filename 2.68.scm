@@ -71,4 +71,8 @@
     (display sample-message)
     (newline)
     (display (encode sample-msg sample-tree))
+    (newline)
+    (display (decode (encode sample-msg sample-tree) sample-tree))
+    (newline)
+    (display (encode (decode sample-message sample-tree) sample-tree))
 )
