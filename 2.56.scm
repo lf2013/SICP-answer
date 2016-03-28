@@ -13,12 +13,12 @@
                 (make-product (multiplier expr) (deriv (multiplicand expr) var))
                 (make-product (deriv (multiplier expr) var) (multiplicand expr))))
           ((exponentiation? expr)
-            (let ((n (exponent expr)) (u (base expr)))
+            (let ((n (exponent expr)) (b (base expr)))
                 (cond ((= n 0) (deriv 1 var))
-                      ((= n 1) (deriv u var))
-                      (else (make-product (exponent expr)
-                                (make-product (make-exp (base expr) (- (exponent expr) 1))
-                                    (deriv (base expr) var)))))))
+                      ((= n 1) (deriv b var))
+                      (else (make-product n
+                                (make-product (make-exp b (- n 1))
+                                    (deriv b var)))))))
           (else (error "unknown expression type -- DERIVE" expr))))
 
 (define (variable? x) (symbol? x))

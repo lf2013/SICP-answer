@@ -33,7 +33,7 @@
 (define (deriv-expr operands var)
     (let ((b (car operands)) (n (cadr operands)))
         (cond ((= n 0) (deriv 1 var))
-              ((= n 1) (deriv u var))
+              ((= n 1) (deriv b var))
               (else (make-product n
                       (make-product (make-exp b  (- n 1))
                           (deriv b var)))))))
