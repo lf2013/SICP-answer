@@ -1,0 +1,26 @@
+; things worth doing typically take time and effort
+; 3.6
+(define (rand-update x)
+    (remainder (+ (* 11 x) 13) 10001))
+(define rand
+    (let ((x 1))
+        (lambda (op)
+        (cond ((eq? op 'generate) (begin (set! x (rand-update x)) x))
+              ((eq? op 'reset) (lambda (y) (begin (set! x y) y)))
+              (else (error "unknow operation"))))))
+
+(define (try)
+    (display (rand 'generate))
+    (newline)
+    (display (rand 'generate))
+    (newline)
+    (display (rand 'generate))
+    (newline)
+    (display ((rand 'reset) 1))
+    (newline)
+    (display (rand 'generate))
+    (newline)
+    (display (rand 'generate))
+    (newline)
+    (display (rand 'generate))
+)
