@@ -24,5 +24,5 @@
     (define acc (make-account 'passwd 100))
     (display ((acc 'passwd 'withdraw) 50))
     (newline)
-    (display ((acc 'worng 'withdraw) 60))
+    (display ((acc 'wrong 'withdraw) 60))
 )
