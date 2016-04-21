@@ -14,4 +14,7 @@
     (define a (list 'a 'b 'c 'd))
     (display a)
     (newline)
-    (display (mystery a)))
+    (display (mystery a))
+    (newline)
+    (display a)
+)
