@@ -1,0 +1,28 @@
+; things worth doing typically take time and effort
+; 3.17
+(define (count-pairs x)
+    (let ((counted '()))
+        (define (in-counted x all)
+            (cond ((null? all) false)
+                  ((eq? x (car all)) true)
+                  (else (in-counted x (cdr all)))))
+        (define (connt-base x)
+        (if (or (not (pair? x)) (in-counted x counted))
+            0
+        (begin (set! counted (cons x counted)) (+  (connt-base (car x))
+            (connt-base (cdr x))
+            1))))
+        (connt-base x)))
+
+(define (try)
+    (define a3 (list 'a 'b 'c))
+    (define z (cons 'c ()))
+    (define y (cons z z))
+    (define a4 (cons (cons z z) '()))
+    (define a7 (cons y y))
+    (display (count-pairs a3))
+    (newline)
+    (display (count-pairs a4))
+    (newline)
+    (display (count-pairs a7))
+)
