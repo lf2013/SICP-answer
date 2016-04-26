@@ -25,7 +25,7 @@
                     (set-rear-ptr! queue new-item)
                     queue))))
 
-(define (delete-queuq! queue)
+(define (delete-queue! queue)
     (cond ((empty-quque? queue)
             (error "empty queue"))
           (else
@@ -47,10 +47,10 @@
     (insert-queue! q1 'b)
     (display-queue q1)
     (newline)
-    (delete-queuq! q1)
+    (delete-queue! q1)
     (display-queue q1)
     (newline)
-    (delete-queuq! q1)
+    (delete-queue! q1)
     (display-queue q1)
     (newline)
 )
