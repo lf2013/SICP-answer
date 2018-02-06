@@ -73,3 +73,5 @@
     (newline)
     (display (look-up2 'k2 'k2 a2))
 )
+
+(try)

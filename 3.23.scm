@@ -118,3 +118,5 @@
     (display-queue q1)
     (newline)
 )
+
+(try)

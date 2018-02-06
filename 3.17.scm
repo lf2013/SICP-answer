@@ -26,3 +26,4 @@
     (newline)
     (display (count-pairs a7))
 )
+(try)
