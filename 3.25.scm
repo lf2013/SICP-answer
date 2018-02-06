@@ -52,6 +52,10 @@
     (insert! a 'v6 '(k2 k3 k4 k6))
     (newline)
     (display (look-up a '(k2 k3 k4 k6)))
+    (newline)
+    (insert! a 'v7 '(k2 k3 k4 k6))
+    (newline)
+    (display (look-up a '(k2 k3 k4 k6)))
 )
 
 (try)
