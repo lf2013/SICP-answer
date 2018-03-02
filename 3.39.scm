@@ -19,7 +19,7 @@
 	 (s (lambda () (set! x (+ x 1)))))
 )
 
-; possible result: 121, 100, 101 
+; possible result: 121, 100, 101, 11, 110 
 (define (try3)
 	(define x 10)
 	(define s (make-serializer))
