@@ -42,5 +42,6 @@
 
 ; the program would hold forerver
 ; in the call ((serializer1 (serializer2 exchange)) we already hold balance-serializer
+; poor louis
 ; there is no way to call (account1 'withdraw), course (account1 'serializer) already hold the balance-serializer
 
