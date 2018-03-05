@@ -56,7 +56,7 @@
 	(newline)
 	(stream-display  a)
 	(newline)
-	(stream-display (stream-map2 (lambda (a) (* a a)) a))
+	(stream-display (stream-map2 (lambda (a)  (* a a)) a))
 	(newline)
 	(define b (make-stream 1 10))
 	(define c (make-stream 1 10))
