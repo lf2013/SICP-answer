@@ -51,6 +51,18 @@
 
 ;;;;;;
 
+
+(define (stream-for-each proc s)
+  (if (stream-null? s)
+      'done
+      (begin 
+        (proc (stream-car s))
+        (stream-for-each proc 
+                         (stream-cdr s)))))
+
+(define (display-stream s)
+  (stream-for-each display-line s))
+
 (define (memo-proc proc)
   (let ((already-run? false) (result false))
     (lambda ()
