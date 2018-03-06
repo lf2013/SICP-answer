@@ -93,7 +93,7 @@
 (define (mul-series s1 s2)
   (cons-stream (* (stream-car s1) (stream-car s2))
 				(add-streams (scale-stream (stream-cdr s1) (stream-car s2)) 
-							 (scale-stream (stream-cdr s2) (stream-car s1)))))
+							 (mul-series (stream-cdr s2) s1))))
 
 (define (int n) (cons-stream n (int (+ 1 n))))
 
@@ -118,7 +118,6 @@
 	(display (stream-head sine-series 10)) (newline)
 	(display (stream-head cosine-series 10)) (newline)
 	(display (stream-head (add-streams sine-series cosine-series) 10)) (newline)
-	(display (stream-head (mul-stream sine-series cosine-series) 10)) (newline)
 	(display (stream-head (mul-series sine-series cosine-series) 10)) (newline)
 )
 
