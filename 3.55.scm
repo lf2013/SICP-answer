@@ -50,11 +50,18 @@
 (define (add-stream s1 s2)
 	(stream-map + s1 s2))
 
+(define (partial-sums s) 
+	(define a
+		(cons-stream (stream-car s) (add-stream a (stream-cdr s))))
+	a)
+
 ; cache version
 (define (try)
 	(define (int n) (cons-stream n (int (+ 1 n))))
-	(define s (cons-stream 1 (add-stream s (int 2))))
-	(display-stream s)
+	; (define s (cons-stream 1 (add-stream s (int 2))))
+	(display (stream-head (int 1) 10)) (newline)
+	(define s (partial-sums (int 1)))
+	(display (stream-head s 10)) (newline)
 )
 
 (try)
