@@ -16,5 +16,6 @@ I'm glad to see this project helps people who are trying to improve their skills
 6. finished `chapter 3` `2018/03/09`
 
 **resources:**
-[mit-online-book](https://mitpress.mit.edu/sicp/full-text/book/book.html)
-[nice online book] (http://sarabander.github.io/sicp/html/index.xhtml#SEC_Contents)
+
+[mit-online-book](https://mitpress.mit.edu/sicp/full-text/book/book.html)    
+[nice online book](http://sarabander.github.io/sicp/html/index.xhtml#SEC_Contents)
