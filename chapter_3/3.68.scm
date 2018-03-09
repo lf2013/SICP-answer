@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -49,9 +50,6 @@
 (define (display-stream s)
   (stream-for-each display-line s))
 
-(define (add-stream s1 s2)
-	(stream-map + s1 s2))
-
 (define (scale-stream stream factor)
   (stream-map
    (lambda (x) (* x factor))
@@ -80,19 +78,88 @@
                     (stream-cdr s1)
                     (stream-cdr s2)))))))))
 
-(define (expand num den radix)
-  (cons-stream
-   (quotient (* num radix) den)
-   (expand (remainder (* num radix) den) 
-           den 
-           radix)))
+(define (add-streams s1 s2)
+	(stream-map + s1 s2))
+
+(define (mul-stream s1 s2)
+	(stream-map * s1 s2))
+
+(define (mul-series s1 s2)
+  (cons-stream (* (stream-car s1) (stream-car s2))
+				(add-streams (scale-stream (stream-cdr s2) (stream-car s1)) 
+							 (mul-series (stream-cdr s1) s2))))
+
+(define (int n) (cons-stream n (int (+ 1 n))))
+
+(define (integrate-series s) (stream-map / s (int 1)))
+
+(define (average a b)
+	(/ (+ a b) 2))
+
+(define (sqrt-improve guess x)
+  (average guess (/ x guess)))
+
+(define (sqrt-stream x)
+  (define guesses
+    (cons-stream 
+     1.0 (stream-map
+          (lambda (guess)
+            (sqrt-improve guess x))
+          guesses)))
+  guesses)
+
+(define (ln2-summands n)
+  (cons-stream 
+   (/ 1.0 n)
+   (stream-map - (ln2-summands (+ n 1)))))
+
+(define (add-stream s1 s2)
+	(stream-map + s1 s2))
+
+(define (partial-sums s) 
+	(define a
+		(cons-stream (stream-car s) (add-stream a (stream-cdr s))))
+	a)
+
+(define ln2-stream
+   (partial-sums (ln2-summands 1)) )
+
+(define (euler-transform s)
+  (let ((s0 (stream-ref s 0))
+        (s1 (stream-ref s 1))
+        (s2 (stream-ref s 2)))
+    (cons-stream 
+     (- s2 (/ (square (- s2 s1))
+              (+ s0 (* -2 s1) s2)))
+     (euler-transform (stream-cdr s)))))
+
+(define (make-tableau transform s)
+	(cons-stream s
+		(make-tableau transform (transform s))))
+
+(define (accelerated-sequence transform s)
+	(stream-map stream-car (make-tableau transform s)))
+
+(define (interleave s1 s2)
+  (if (stream-null? s1)
+      s2
+      (cons-stream 
+       (stream-car s1)
+       (interleave s2 (stream-cdr s1)))))
+
+(define (pairs s t)
+   (interleave
+    (stream-map (lambda (x) 
+                  (list (stream-car s) x))
+                t)
+    (pairs (stream-cdr s) (stream-cdr t))))
 
 (define (try)
-	; 1 4 2 8 5 7 1 4 2 ..
-	; (display-stream (expand 1 7 10))
-
-	; 3 7 5 0 0 0 
-	(display-stream (expand 3 8 10))
+	(newline)
+	(display (stream-head (int 1) 40)) (newline)
+	; without delay, recursive forever
+	(display (stream-head (pairs (int 1) (int 1)) 20)) (newline)
+	(display (stream-head (stream-map (lambda (a b) (list a b)) (int 1) (pairs (int 1) (int 1))) 140)) (newline)
 )
 
 (try)

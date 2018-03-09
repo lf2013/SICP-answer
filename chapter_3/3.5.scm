@@ -14,6 +14,7 @@
               ((test) (iter (- left 1) (+ succ 1)))
               (else (iter (- left 1) succ))))
     (iter trials 0))
+
 (define (try)
     (display (/ (estimate-integral p 2 8 4 10 10) 9))
     (newline)
@@ -27,3 +28,4 @@
     (newline)
     (display (/ (estimate-integral p 2 8 4 10 100000) 9))
 )
+(try)

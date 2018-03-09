@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -50,15 +51,38 @@
 (define (add-stream s1 s2)
 	(stream-map + s1 s2))
 
-(define (mul-stream s1 s2)
-	(stream-map * s1 s2))
+(define (scale-stream stream factor)
+  (stream-map
+   (lambda (x) (* x factor))
+   stream))
+
+(define (merge s1 s2)
+  (cond ((stream-null? s1) s2)
+        ((stream-null? s2) s1)
+        (else
+         (let ((s1car (stream-car s1))
+               (s2car (stream-car s2)))
+           (cond ((< s1car s2car)
+                  (cons-stream 
+                   s1car 
+                   (merge (stream-cdr s1) 
+                          s2)))
+                 ((> s1car s2car)
+                  (cons-stream 
+                   s2car 
+                   (merge s1 
+                          (stream-cdr s2))))
+                 (else
+                  (cons-stream 
+                   s1car
+                   (merge 
+                    (stream-cdr s1)
+                    (stream-cdr s2)))))))))
 
 ; cache version
 (define (try)
-	; 1! 2! 3! 4!
-	(define (int n) (cons-stream n (int (+ 1 n))))
-	(define s (cons-stream 1 (mul-stream s (int 2))))
-	(display-stream s)
+	(define S (cons-stream 1 (merge (scale-stream S 2) (merge (scale-stream S 3) (scale-stream S 5)))))
+	(display-stream S)
 )
 
 (try)

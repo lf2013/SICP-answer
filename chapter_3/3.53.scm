@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)

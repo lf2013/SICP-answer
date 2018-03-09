@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -54,35 +55,90 @@
    (lambda (x) (* x factor))
    stream))
 
-(define (merge-weighted s1 s2 weight)
+(define (merge s1 s2)
   (cond ((stream-null? s1) s2)
         ((stream-null? s2) s1)
         (else
          (let ((s1car (stream-car s1))
                (s2car (stream-car s2)))
-           (cond ((< (weight s1car) (weight s2car))
+           (cond ((< s1car s2car)
                   (cons-stream 
                    s1car 
-                   (merge-weighted (stream-cdr s1) 
-                          s2 weight)))
-                 ; ((> (weight s1car) (weight s2car))
-				 (else 
+                   (merge (stream-cdr s1) 
+                          s2)))
+                 ((> s1car s2car)
                   (cons-stream 
                    s2car 
-                   (merge-weighted s1 
-                          (stream-cdr s2) weight))))))))
-                 ; (else
-                 ;  (cons-stream 
-                 ;   s1car
-                 ;   (merge-weighted 
-                 ;    (stream-cdr s1)
-                 ;    (stream-cdr s2) weight))))))))
+                   (merge s1 
+                          (stream-cdr s2))))
+                 (else
+                  (cons-stream 
+                   s1car
+                   (merge 
+                    (stream-cdr s1)
+                    (stream-cdr s2)))))))))
 
 (define (add-streams s1 s2)
 	(stream-map + s1 s2))
 
 (define (mul-stream s1 s2)
 	(stream-map * s1 s2))
+
+(define (mul-series s1 s2)
+  (cons-stream (* (stream-car s1) (stream-car s2))
+				(add-streams (scale-stream (stream-cdr s2) (stream-car s1)) 
+							 (mul-series (stream-cdr s1) s2))))
+
+(define (int n) (cons-stream n (int (+ 1 n))))
+
+(define (integrate-series s) (stream-map / s (int 1)))
+
+(define (average a b)
+	(/ (+ a b) 2))
+
+(define (sqrt-improve guess x)
+  (average guess (/ x guess)))
+
+(define (sqrt-stream x)
+  (define guesses
+    (cons-stream 
+     1.0 (stream-map
+          (lambda (guess)
+            (sqrt-improve guess x))
+          guesses)))
+  guesses)
+
+(define (ln2-summands n)
+  (cons-stream 
+   (/ 1.0 n)
+   (stream-map - (ln2-summands (+ n 1)))))
+
+(define (add-stream s1 s2)
+	(stream-map + s1 s2))
+
+(define (partial-sums s) 
+	(define a
+		(cons-stream (stream-car s) (add-stream a (stream-cdr s))))
+	a)
+
+(define ln2-stream
+   (partial-sums (ln2-summands 1)) )
+
+(define (euler-transform s)
+  (let ((s0 (stream-ref s 0))
+        (s1 (stream-ref s 1))
+        (s2 (stream-ref s 2)))
+    (cons-stream 
+     (- s2 (/ (square (- s2 s1))
+              (+ s0 (* -2 s1) s2)))
+     (euler-transform (stream-cdr s)))))
+
+(define (make-tableau transform s)
+	(cons-stream s
+		(make-tableau transform (transform s))))
+
+(define (accelerated-sequence transform s)
+	(stream-map stream-car (make-tableau transform s)))
 
 (define (interleave s1 s2)
   (if (stream-null? s1)
@@ -100,28 +156,12 @@
                 (stream-cdr t))
     (pairs (stream-cdr s) (stream-cdr t)))))
 
-(define (weighted-pairs s t weight)
-  (cons-stream
-   (list (stream-car s) (stream-car t))
-   (merge-weighted
-    (stream-map (lambda (x) 
-                  (list (stream-car s) x))
-                (stream-cdr t))
-    (weighted-pairs (stream-cdr s) (stream-cdr t) weight) weight)))
-
-(define (int n) (cons-stream n (int (+ 1 n))))
-
-(define (divide? a b) (= (modulo a b) 0))
 (define (try)
 	(newline)
 	(display (stream-head (int 1) 40)) (newline)
-	(display (stream-head (weighted-pairs (int 1) (int 1) (lambda (a) (+ (car a) (cadr a)))) 20)) (newline)
-	(newline)
-	(display (stream-head (stream-filter 
-							(lambda (a) (let ((i (car a)) (j (cadr a))) (not (or (divide? i 2) (divide? i 3) (divide? i 5) (divide? j 2) (divide? j 3) (divide? j 5)))))
-									(weighted-pairs (int 1) (int 1) 
-										(lambda (a) (let ((i (car a)) (j (cadr a))) (+ (* 2 i) (* 3 j) (* 5 i j)))))) 20))
-	; (display (stream-head (stream-map (lambda (a b) (list a b)) (int 1) (pairs (int 1) (int 1))) 140)) (newline)
+	(display (stream-head (pairs (int 1) (int 1)) 20)) (newline)
+	; (2 ** i) (j - i) + (2 ** (i - 1) - 1) 
+	(display (stream-head (stream-map (lambda (a b) (list a b)) (int 1) (pairs (int 1) (int 1))) 140)) (newline)
 )
 
 (try)

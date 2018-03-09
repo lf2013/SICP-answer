@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -12,7 +13,9 @@
   (if (stream-null? (car argstreams))
       the-empty-stream
       (cons-stream
+		; (begin (display 'x)
         (apply proc (map stream-car argstreams))
+		; )
         (apply stream-map
                (cons proc (map stream-cdr argstreams))))))
 
@@ -78,10 +81,19 @@
                     (stream-cdr s1)
                     (stream-cdr s2)))))))))
 
-; cache version
+(define (expand num den radix)
+  (cons-stream
+   (quotient (* num radix) den)
+   (expand (remainder (* num radix) den) 
+           den 
+           radix)))
+
 (define (try)
-	(define S (cons-stream 1 (merge (scale-stream S 2) (merge (scale-stream S 3) (scale-stream S 5)))))
-	(display-stream S)
+	; 1 4 2 8 5 7 1 4 2 ..
+	; (display-stream (expand 1 7 10))
+
+	; 3 7 5 0 0 0 
+	(display-stream (expand 3 8 10))
 )
 
 (try)

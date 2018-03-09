@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -49,9 +50,6 @@
 (define (display-stream s)
   (stream-for-each display-line s))
 
-(define (add-stream s1 s2)
-	(stream-map + s1 s2))
-
 (define (scale-stream stream factor)
   (stream-map
    (lambda (x) (* x factor))
@@ -87,6 +85,17 @@
            den 
            radix)))
 
+(define (add-streams s1 s2)
+	(stream-map + s1 s2))
+
+(define (mul-stream s1 s2)
+	(stream-map * s1 s2))
+
+(define (mul-series s1 s2)
+  (cons-stream (* (stream-car s1) (stream-car s2))
+				(add-streams (scale-stream (stream-cdr s1) (stream-car s2)) 
+							 (mul-series (stream-cdr s2) s1))))
+
 (define (int n) (cons-stream n (int (+ 1 n))))
 
 (define (integrate-series s) (stream-map / s (int 1)))
@@ -107,8 +116,10 @@
 
 (define (try)
 	(stream-head exp-series 5)
-	(stream-head sine-series 10)
-	(stream-head cosine-series 10)
+	(display (stream-head sine-series 10)) (newline)
+	(display (stream-head cosine-series 10)) (newline)
+	(display (stream-head (add-streams sine-series cosine-series) 10)) (newline)
+	(display (stream-head (mul-series sine-series cosine-series) 10)) (newline)
 )
 
 (try)

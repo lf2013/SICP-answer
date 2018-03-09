@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -77,6 +78,13 @@
                     (stream-cdr s1)
                     (stream-cdr s2)))))))))
 
+(define (expand num den radix)
+  (cons-stream
+   (quotient (* num radix) den)
+   (expand (remainder (* num radix) den) 
+           den 
+           radix)))
+
 (define (add-streams s1 s2)
 	(stream-map + s1 s2))
 
@@ -92,59 +100,33 @@
 
 (define (integrate-series s) (stream-map / s (int 1)))
 
-(define (average a b)
-	(/ (+ a b) 2))
-
-(define (sqrt-improve guess x)
-  (average guess (/ x guess)))
-
-(define (sqrt-stream x)
-  (define guesses
-    (cons-stream 
-     1.0 (stream-map
-          (lambda (guess)
-            (sqrt-improve guess x))
-          guesses)))
-  guesses)
-
-(define (ln2-summands n)
+(define exp-series
   (cons-stream 
-   (/ 1.0 n)
-   (stream-map - (ln2-summands (+ n 1)))))
+   1 (integrate-series exp-series)))
 
-(define (add-stream s1 s2)
-	(stream-map + s1 s2))
+(define cosine-series 
+  (cons-stream 1 (integrate-series (scale-stream sine-series -1))))
 
-(define (partial-sums s) 
-	(define a
-		(cons-stream (stream-car s) (add-stream a (stream-cdr s))))
-	a)
+(define sine-series
+  (cons-stream 0 (integrate-series  cosine-series)))
 
-(define ln2-stream
-   (partial-sums (ln2-summands 1)) )
+(define exp-series
+  (cons-stream 
+   1 (integrate-series exp-series)))
 
-(define (euler-transform s)
-  (let ((s0 (stream-ref s 0))
-        (s1 (stream-ref s 1))
-        (s2 (stream-ref s 2)))
-    (cons-stream 
-     (- s2 (/ (square (- s2 s1))
-              (+ s0 (* -2 s1) s2)))
-     (euler-transform (stream-cdr s)))))
+(define (invert-unit-series s)
+	(cons-stream 1 (mul-series (scale-stream (stream-cdr s) -1) (invert-unit-series s)))
+)
 
-(define (make-tableau transform s)
-	(cons-stream s
-		(make-tableau transform (transform s))))
-
-(define (accelerated-sequence transform s)
-	(stream-map stream-car (make-tableau transform s)))
+(define (div-series s1 s2)
+	(mul-series s1 (invert-unit-series s2)))
 
 (define (try)
-	(newline)
-	(display (stream-head ln2-stream 10)) (newline)
-	(display (stream-head (euler-transform ln2-stream) 10)) (newline)
-	(display (stream-head (euler-transform (euler-transform ln2-stream)) 10)) (newline)
-	(display (stream-head (accelerated-sequence euler-transform ln2-stream) 10)) (newline)
+	(stream-head exp-series 5)
+	(display (stream-head exp-series 10)) (newline)
+	(display (stream-head sine-series 10)) (newline)
+	(display (stream-head (div-series sine-series exp-series) 10)) (newline)
+	(display (stream-head (mul-series exp-series (div-series sine-series exp-series)) 10)) (newline)
 )
 
 (try)

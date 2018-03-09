@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -12,9 +13,7 @@
   (if (stream-null? (car argstreams))
       the-empty-stream
       (cons-stream
-		; (begin (display 'x)
         (apply proc (map stream-car argstreams))
-		; )
         (apply stream-map
                (cons proc (map stream-cdr argstreams))))))
 
@@ -52,39 +51,18 @@
 (define (add-stream s1 s2)
 	(stream-map + s1 s2))
 
-(define (scale-stream stream factor)
-  (stream-map
-   (lambda (x) (* x factor))
-   stream))
-
-(define (merge s1 s2)
-  (cond ((stream-null? s1) s2)
-        ((stream-null? s2) s1)
-        (else
-         (let ((s1car (stream-car s1))
-               (s2car (stream-car s2)))
-           (cond ((< s1car s2car)
-                  (cons-stream 
-                   s1car 
-                   (merge (stream-cdr s1) 
-                          s2)))
-                 ((> s1car s2car)
-                  (cons-stream 
-                   s2car 
-                   (merge s1 
-                          (stream-cdr s2))))
-                 (else
-                  (cons-stream 
-                   s1car
-                   (merge 
-                    (stream-cdr s1)
-                    (stream-cdr s2)))))))))
+(define (partial-sums s) 
+	(define a
+		(cons-stream (stream-car s) (add-stream a (stream-cdr s))))
+	a)
 
 ; cache version
 (define (try)
-	; n times
-	(define fib (cons-stream 1 (cons-stream 2 (add-stream (stream-cdr fib) fib))))
-	(display-stream fib)
+	(define (int n) (cons-stream n (int (+ 1 n))))
+	; (define s (cons-stream 1 (add-stream s (int 2))))
+	(display (stream-head (int 1) 10)) (newline)
+	(define s (partial-sums (int 1)))
+	(display (stream-head s 10)) (newline)
 )
 
 (try)

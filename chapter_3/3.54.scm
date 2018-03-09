@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -50,18 +51,15 @@
 (define (add-stream s1 s2)
 	(stream-map + s1 s2))
 
-(define (partial-sums s) 
-	(define a
-		(cons-stream (stream-car s) (add-stream a (stream-cdr s))))
-	a)
+(define (mul-stream s1 s2)
+	(stream-map * s1 s2))
 
 ; cache version
 (define (try)
+	; 1! 2! 3! 4!
 	(define (int n) (cons-stream n (int (+ 1 n))))
-	; (define s (cons-stream 1 (add-stream s (int 2))))
-	(display (stream-head (int 1) 10)) (newline)
-	(define s (partial-sums (int 1)))
-	(display (stream-head s 10)) (newline)
+	(define s (cons-stream 1 (mul-stream s (int 2))))
+	(display-stream s)
 )
 
 (try)

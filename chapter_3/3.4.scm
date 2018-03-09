@@ -49,3 +49,5 @@
     (newline)
     (display ((acc 'worng 'withdraw) 60))
 )
+
+(try)

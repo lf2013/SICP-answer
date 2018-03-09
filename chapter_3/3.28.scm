@@ -14,4 +14,4 @@
 	'ok)
 
 (define (logical-or a1 a2)
-	(if (and (= a1 1) (= a2 1)) 1 0))
+	(if (and (= a1 0) (= a2 0)) 0 1))

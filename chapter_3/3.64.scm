@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -77,13 +78,6 @@
                     (stream-cdr s1)
                     (stream-cdr s2)))))))))
 
-(define (expand num den radix)
-  (cons-stream
-   (quotient (* num radix) den)
-   (expand (remainder (* num radix) den) 
-           den 
-           radix)))
-
 (define (add-streams s1 s2)
 	(stream-map + s1 s2))
 
@@ -99,33 +93,35 @@
 
 (define (integrate-series s) (stream-map / s (int 1)))
 
-(define exp-series
-  (cons-stream 
-   1 (integrate-series exp-series)))
+(define (average a b)
+	(/ (+ a b) 2))
 
-(define cosine-series 
-  (cons-stream 1 (integrate-series (scale-stream sine-series -1))))
+(define (sqrt-improve guess x)
+  (average guess (/ x guess)))
 
-(define sine-series
-  (cons-stream 0 (integrate-series  cosine-series)))
+(define (sqrt-stream x)
+  (define guesses
+    (cons-stream 
+     1.0 (stream-map
+          (lambda (guess)
+            (sqrt-improve guess x))
+          guesses)))
+  guesses)
 
-(define exp-series
-  (cons-stream 
-   1 (integrate-series exp-series)))
+(define (stream-limit s tolerance)
+	(let ((a (stream-car s))
+		  (b (stream-car (stream-cdr s))))
+		(if (< (abs (- a b)) tolerance)
+			(cons-stream a '())
+		(cons-stream a
+			(stream-limit (stream-cdr s) tolerance)))))
 
-(define (invert-unit-series s)
-	(cons-stream 1 (mul-series (scale-stream (stream-cdr s) -1) (invert-unit-series s)))
-)
-
-(define (div-series s1 s2)
-	(mul-series s1 (invert-unit-series s2)))
+(define (sqrt2 x tolerance)
+  (stream-limit (sqrt-stream x) tolerance))
 
 (define (try)
-	(stream-head exp-series 5)
-	(display (stream-head exp-series 10)) (newline)
-	(display (stream-head sine-series 10)) (newline)
-	(display (stream-head (div-series sine-series exp-series) 10)) (newline)
-	(display (stream-head (mul-series exp-series (div-series sine-series exp-series)) 10)) (newline)
+	(display (stream-head (sqrt-stream 2) 10)) (newline)
+	(display-stream (sqrt2 2 0.000001)) (newline)
 )
 
 (try)

@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -49,6 +50,9 @@
 (define (display-stream s)
   (stream-for-each display-line s))
 
+(define (add-stream s1 s2)
+	(stream-map + s1 s2))
+
 (define (scale-stream stream factor)
   (stream-map
    (lambda (x) (* x factor))
@@ -77,50 +81,35 @@
                     (stream-cdr s1)
                     (stream-cdr s2)))))))))
 
-(define (add-streams s1 s2)
-	(stream-map + s1 s2))
-
-(define (mul-stream s1 s2)
-	(stream-map * s1 s2))
-
-(define (mul-series s1 s2)
-  (cons-stream (* (stream-car s1) (stream-car s2))
-				(add-streams (scale-stream (stream-cdr s2) (stream-car s1)) 
-							 (mul-series (stream-cdr s1) s2))))
+(define (expand num den radix)
+  (cons-stream
+   (quotient (* num radix) den)
+   (expand (remainder (* num radix) den) 
+           den 
+           radix)))
 
 (define (int n) (cons-stream n (int (+ 1 n))))
 
 (define (integrate-series s) (stream-map / s (int 1)))
 
-(define (average a b)
-	(/ (+ a b) 2))
+(define exp-series
+  (cons-stream 
+   1 (integrate-series exp-series)))
 
-(define (sqrt-improve guess x)
-  (average guess (/ x guess)))
+(define cosine-series 
+  (cons-stream 1 (integrate-series (scale-stream sine-series -1))))
 
-(define (sqrt-stream x)
-  (define guesses
-    (cons-stream 
-     1.0 (stream-map
-          (lambda (guess)
-            (sqrt-improve guess x))
-          guesses)))
-  guesses)
+(define sine-series
+  (cons-stream 0 (integrate-series  cosine-series)))
 
-(define (stream-limit s tolerance)
-	(let ((a (stream-car s))
-		  (b (stream-car (stream-cdr s))))
-		(if (< (abs (- a b)) tolerance)
-			(cons-stream a '())
-		(cons-stream a
-			(stream-limit (stream-cdr s) tolerance)))))
-
-(define (sqrt2 x tolerance)
-  (stream-limit (sqrt-stream x) tolerance))
+(define exp-series
+  (cons-stream 
+   1 (integrate-series exp-series)))
 
 (define (try)
-	(display (stream-head (sqrt-stream 2) 10)) (newline)
-	(display-stream (sqrt2 2 0.000001)) (newline)
+	(stream-head exp-series 5)
+	(stream-head sine-series 10)
+	(stream-head cosine-series 10)
 )
 
 (try)

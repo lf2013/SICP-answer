@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -77,13 +78,6 @@
                     (stream-cdr s1)
                     (stream-cdr s2)))))))))
 
-(define (expand num den radix)
-  (cons-stream
-   (quotient (* num radix) den)
-   (expand (remainder (* num radix) den) 
-           den 
-           radix)))
-
 (define (add-streams s1 s2)
 	(stream-map + s1 s2))
 
@@ -99,29 +93,79 @@
 
 (define (integrate-series s) (stream-map / s (int 1)))
 
-(define exp-series
+(define (average a b)
+	(/ (+ a b) 2))
+
+(define (sqrt-improve guess x)
+  (average guess (/ x guess)))
+
+(define (sqrt-stream x)
+  (define guesses
+    (cons-stream 
+     1.0 (stream-map
+          (lambda (guess)
+            (sqrt-improve guess x))
+          guesses)))
+  guesses)
+
+(define (ln2-summands n)
   (cons-stream 
-   1 (integrate-series exp-series)))
+   (/ 1.0 n)
+   (stream-map - (ln2-summands (+ n 1)))))
 
-(define cosine-series 
-  (cons-stream 1 (integrate-series (scale-stream sine-series -1))))
+(define (add-stream s1 s2)
+	(stream-map + s1 s2))
 
-(define sine-series
-  (cons-stream 0 (integrate-series  cosine-series)))
+(define (partial-sums s) 
+	(define a
+		(cons-stream (stream-car s) (add-stream a (stream-cdr s))))
+	a)
 
-(define exp-series
-  (cons-stream 
-   1 (integrate-series exp-series)))
+(define ln2-stream
+   (partial-sums (ln2-summands 1)) )
 
-(define (invert-unit-series s)
-	(cons-stream 1 (mul-series (scale-stream (stream-cdr s) -1) (invert-unit-series s)))
-)
+(define (euler-transform s)
+  (let ((s0 (stream-ref s 0))
+        (s1 (stream-ref s 1))
+        (s2 (stream-ref s 2)))
+    (cons-stream 
+     (- s2 (/ (square (- s2 s1))
+              (+ s0 (* -2 s1) s2)))
+     (euler-transform (stream-cdr s)))))
+
+(define (make-tableau transform s)
+	(cons-stream s
+		(make-tableau transform (transform s))))
+
+(define (accelerated-sequence transform s)
+	(stream-map stream-car (make-tableau transform s)))
+
+(define (interleave s1 s2)
+  (if (stream-null? s1)
+      s2
+      (cons-stream 
+       (stream-car s1)
+       (interleave s2 (stream-cdr s1)))))
+
+(define (pairs s t)
+  (cons-stream
+   (list (stream-car s) (stream-car t))
+   (interleave
+    (stream-map (lambda (x) 
+                  (list (stream-car s) x))
+                (stream-cdr t))
+	(interleave 
+    	(stream-map (lambda (x) 
+    	              (list x (stream-car t) ))
+    	            (stream-cdr s))
+    	(pairs (stream-cdr s) (stream-cdr t))))))
 
 (define (try)
-	(stream-head exp-series 5)
-	(display (stream-head exp-series 10)) (newline)
-	(display (stream-head (invert-unit-series exp-series) 10)) (newline)
-	(display (stream-head (mul-series exp-series (invert-unit-series exp-series)) 10)) (newline)
+	(newline)
+	(display (stream-head (int 1) 40)) (newline)
+	(display (stream-head (pairs (int 1) (int 1)) 20)) (newline)
+	; (2 ** i) (j - i) + (2 ** (i - 1) - 1) 
+	(display (stream-head (stream-map (lambda (a b) (list a b)) (int 1) (pairs (int 1) (int 1))) 140)) (newline)
 )
 
 (try)

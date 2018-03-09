@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -71,6 +72,12 @@
                    s2car 
                    (merge-weighted s1 
                           (stream-cdr s2) weight))))))))
+                 ; (else
+                 ;  (cons-stream 
+                 ;   s1car
+                 ;   (merge-weighted 
+                 ;    (stream-cdr s1)
+                 ;    (stream-cdr s2) weight))))))))
 
 (define (add-streams s1 s2)
 	(stream-map + s1 s2))
@@ -105,19 +112,17 @@
 
 (define (int n) (cons-stream n (int (+ 1 n))))
 
-(define (manujan-numbers) 
-	(define weight (lambda (a) (let ((i (car a)) (j (cadr a))) (+ (* i i i) (* j j j)))))
-	(define wp (weighted-pairs (int 1) (int 1) weight))
-	(stream-filter (lambda (a) (let ((i (car a)) (j (cadr a)))
-								(= (weight i) (weight j))))	
-				(stream-map (lambda (a b) (list a b)) wp (stream-cdr wp))))
-
+(define (divide? a b) (= (modulo a b) 0))
 (define (try)
 	(newline)
-	; (display (stream-head (weighted-pairs (int 1) (int 1) (lambda (a) (+ (car a) (cadr a)))) 20)) (newline)
-	; (display (stream-head (weighted-pairs (int 1) (int 1) weight) 20)) (newline)
-	; (display (stream-head (weighted-pairs (int 1) (int 1) (lambda (a) (+ (car a) (cadr a)))) 20)) (newline)
-	(display (stream-head (manujan-numbers) 10))
+	(display (stream-head (int 1) 40)) (newline)
+	(display (stream-head (weighted-pairs (int 1) (int 1) (lambda (a) (+ (car a) (cadr a)))) 20)) (newline)
+	(newline)
+	(display (stream-head (stream-filter 
+							(lambda (a) (let ((i (car a)) (j (cadr a))) (not (or (divide? i 2) (divide? i 3) (divide? i 5) (divide? j 2) (divide? j 3) (divide? j 5)))))
+									(weighted-pairs (int 1) (int 1) 
+										(lambda (a) (let ((i (car a)) (j (cadr a))) (+ (* 2 i) (* 3 j) (* 5 i j)))))) 20))
+	; (display (stream-head (stream-map (lambda (a b) (list a b)) (int 1) (pairs (int 1) (int 1))) 140)) (newline)
 )
 
 (try)

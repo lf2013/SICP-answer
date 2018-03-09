@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -49,6 +50,9 @@
 (define (display-stream s)
   (stream-for-each display-line s))
 
+(define (add-stream s1 s2)
+	(stream-map + s1 s2))
+
 (define (scale-stream stream factor)
   (stream-map
    (lambda (x) (* x factor))
@@ -77,51 +81,11 @@
                     (stream-cdr s1)
                     (stream-cdr s2)))))))))
 
-(define (add-streams s1 s2)
-	(stream-map + s1 s2))
-
-(define (mul-stream s1 s2)
-	(stream-map * s1 s2))
-
-(define (mul-series s1 s2)
-  (cons-stream (* (stream-car s1) (stream-car s2))
-				(add-streams (scale-stream (stream-cdr s2) (stream-car s1)) 
-							 (mul-series (stream-cdr s1) s2))))
-
-(define (int n) (cons-stream n (int (+ 1 n))))
-
-(define (integrate-series s) (stream-map / s (int 1)))
-
-(define (average a b)
-	(/ (+ a b) 2))
-
-(define (sqrt-improve guess x)
-  (average guess (/ x guess)))
-
-(define (sqrt-stream x)
-  (define guesses
-    (cons-stream 
-     1.0 (stream-map
-          (lambda (guess)
-            (sqrt-improve guess x))
-          guesses)))
-  guesses)
-
-(define (sqrt-stream2 x)
-    (cons-stream 
-     1.0 (stream-map
-          (lambda (guess)
-            (sqrt-improve guess x))
-          (sqrt-stream2 x))))
-
+; cache version
 (define (try)
-	; every value caculated only once
-	(display (stream-head (sqrt-stream 2) 10)) (newline)
-
-	; every value caculated more than once, course recursive and no cache
-	(display (stream-head (sqrt-stream2 2) 10)) (newline)
-
-	; if without memo the two would be the same.
+	; n times
+	(define fib (cons-stream 1 (cons-stream 2 (add-stream (stream-cdr fib) fib))))
+	(display-stream fib)
 )
 
 (try)

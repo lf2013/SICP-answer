@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -147,18 +148,58 @@
        (interleave s2 (stream-cdr s1)))))
 
 (define (pairs s t)
+  (cons-stream
+   (list (stream-car s) (stream-car t))
    (interleave
     (stream-map (lambda (x) 
                   (list (stream-car s) x))
-                t)
-    (pairs (stream-cdr s) (stream-cdr t))))
+                (stream-cdr t))
+    (pairs (stream-cdr s) (stream-cdr t)))))
+
+(define (pairs2 s t)
+  (cons-stream
+   (list (stream-car s) (stream-car t))
+   (interleave
+    (stream-map (lambda (x) 
+                  (list (stream-car s) x))
+                (stream-cdr t))
+    (pairs2 (stream-cdr s) (stream-cdr t)))))
+
+(define (triples s t u)
+  (cons-stream
+   (list (stream-car s) (stream-car t) (stream-car u))
+   (interleave
+    (stream-map (lambda (x) 
+                  (list (stream-car s) (stream-car t) x))
+                (stream-cdr u))
+   	(interleave
+   	 (stream-map (lambda (x) 
+   	               (list (stream-car s) (car x) (cadr x)))
+   	             (pairs (stream-cdr t) (stream-cdr u)))
+   	 (triples (stream-cdr s) (stream-cdr t) (stream-cdr u))))))
+
+(define (triples2 s t u)
+  (cons-stream
+   (list (stream-car s) (stream-car t) (stream-car u))
+   (interleave
+    (stream-map (lambda (x) 
+                  (list (stream-car s) (car x) (cadr x)))
+   	             (stream-cdr (pairs t u)))
+   	 (triples (stream-cdr s) (stream-cdr t) (stream-cdr u)))))
 
 (define (try)
 	(newline)
 	(display (stream-head (int 1) 40)) (newline)
-	; without delay, recursive forever
-	(display (stream-head (pairs (int 1) (int 1)) 20)) (newline)
-	(display (stream-head (stream-map (lambda (a b) (list a b)) (int 1) (pairs (int 1) (int 1))) 140)) (newline)
+	(display (stream-head (pairs2 (int 1) (int 1) ) 20)) (newline)
+	(display (stream-head (pairs (int 1) (stream-cdr (int 1)) ) 20)) (newline)
+	(display (stream-head (triples (int 1) (int 1) (int 1)) 20)) (newline)
+	(display (stream-head (triples2 (int 1) (int 1) (int 1)) 20)) (newline)
+	(display (stream-head (stream-filter 
+							(lambda (t) (let ((a (car t)) (b (cadr t)) (c (caddr t)))
+											(= (* c c) (+ (* a a) (* b b)))))
+							(triples (int 1) (int 1) (int 1))) 2)) 
+	(newline)
+	; (display (stream-head (stream-map (lambda (a b) (list a b)) (int 1) (pairs (int 1) (int 1))) 140)) (newline)
 )
 
 (try)

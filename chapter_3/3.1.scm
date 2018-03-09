@@ -9,3 +9,5 @@
     (display (A 10))
     (newline)
     (display (A 10)))
+
+(try)

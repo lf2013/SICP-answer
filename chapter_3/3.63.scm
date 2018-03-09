@@ -1,3 +1,4 @@
+; things worth doing typically take time and effort
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
@@ -77,13 +78,6 @@
                     (stream-cdr s1)
                     (stream-cdr s2)))))))))
 
-(define (expand num den radix)
-  (cons-stream
-   (quotient (* num radix) den)
-   (expand (remainder (* num radix) den) 
-           den 
-           radix)))
-
 (define (add-streams s1 s2)
 	(stream-map + s1 s2))
 
@@ -92,33 +86,43 @@
 
 (define (mul-series s1 s2)
   (cons-stream (* (stream-car s1) (stream-car s2))
-				(add-streams (scale-stream (stream-cdr s1) (stream-car s2)) 
-							 (mul-series (stream-cdr s2) s1))))
+				(add-streams (scale-stream (stream-cdr s2) (stream-car s1)) 
+							 (mul-series (stream-cdr s1) s2))))
 
 (define (int n) (cons-stream n (int (+ 1 n))))
 
 (define (integrate-series s) (stream-map / s (int 1)))
 
-(define exp-series
-  (cons-stream 
-   1 (integrate-series exp-series)))
+(define (average a b)
+	(/ (+ a b) 2))
 
-(define cosine-series 
-  (cons-stream 1 (integrate-series (scale-stream sine-series -1))))
+(define (sqrt-improve guess x)
+  (average guess (/ x guess)))
 
-(define sine-series
-  (cons-stream 0 (integrate-series  cosine-series)))
+(define (sqrt-stream x)
+  (define guesses
+    (cons-stream 
+     1.0 (stream-map
+          (lambda (guess)
+            (sqrt-improve guess x))
+          guesses)))
+  guesses)
 
-(define exp-series
-  (cons-stream 
-   1 (integrate-series exp-series)))
+(define (sqrt-stream2 x)
+    (cons-stream 
+     1.0 (stream-map
+          (lambda (guess)
+            (sqrt-improve guess x))
+          (sqrt-stream2 x))))
 
 (define (try)
-	(stream-head exp-series 5)
-	(display (stream-head sine-series 10)) (newline)
-	(display (stream-head cosine-series 10)) (newline)
-	(display (stream-head (add-streams sine-series cosine-series) 10)) (newline)
-	(display (stream-head (mul-series sine-series cosine-series) 10)) (newline)
+	; every value caculated only once
+	(display (stream-head (sqrt-stream 2) 10)) (newline)
+
+	; every value caculated more than once, course recursive and no cache
+	(display (stream-head (sqrt-stream2 2) 10)) (newline)
+
+	; if without memo the two would be the same.
 )
 
 (try)

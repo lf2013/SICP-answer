@@ -24,3 +24,5 @@
     (newline)
     (display (s 'how-many-calls?))
 )
+
+(try)
