@@ -1,10 +1,10 @@
 **SICP-answer**
 
-My personal answer for exercises of book SICP(Structure and Interpretation of Computer Programs).
-If you have any advise on this, feel free to tell me.
-I'm glad to see this project helps people who are trying to improve their skills.
+My personal answer for exercises of book SICP(Structure and Interpretation of Computer Programs).   
+If you have any advise on this, feel free to tell me.   
+I'm glad to see this project helps people who are trying to improve their skills.   
 
-*The thing worth doing typically take time and effort.*
+__*The thing worth doing typically take time and effort.*__
 
 **TIMELINE**
 
