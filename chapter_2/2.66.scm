@@ -1,5 +1,5 @@
 ; the thing worth doing typically take time and effort
-; 2.65
+; 2.66
 
 (define (make-tree entry left right)
     (list entry left right))
