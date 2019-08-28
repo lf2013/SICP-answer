@@ -14,6 +14,7 @@ __*The thing worth doing typically take time and effort.*__
 4. finished `chapter 2` `2016/04/05`
 5. no time pay on until `2018/01/31`
 6. finished `chapter 3` `2018/03/09`
+7. no time pay on until `2019/08/23`
 
 **resources:**
 
