@@ -22,7 +22,7 @@
 (define (trans let-body let-exps lambda-var lambda-exp)
 	(cond ((null? let-exps)
 		  	((make-lambda lambda-var let-body) lambda-exp))
-		  (trans let-body (cdr let-exps) (cons lambda-var (caar let-exps)) (cons lambda-exp (cadr let-exps)))))
+		  (trans let-body (cdr let-exps) (cons (caar let-exps) lambda-var) (cons (cadr let-exps) lambda-exp))))
 
 (define (lambda? exp) 
   (tagged-list? exp 'lambda))
